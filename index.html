@@ -14,14 +14,15 @@
         }
 
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #252525;
+            --bg-primary: #0a0514;
+            --bg-secondary: #1a0f2e;
+            --bg-card: #2a1a3e;
             --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent: #00ff88;
-            --accent-hover: #00cc6a;
-            --border: #333;
+            --text-secondary: #b8a8d4;
+            --accent: #dd00ff;
+            --accent-hover: #b800cc;
+            --border: #4a2f5e;
+            --accent-secondary: #ff00aa;
         }
 
         body {
@@ -60,7 +61,7 @@
         .logo {
             font-size: 3rem;
             font-weight: bold;
-            background: linear-gradient(45deg, var(--accent), #00aaff);
+            background: linear-gradient(45deg, var(--accent), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
@@ -69,7 +70,7 @@
 
         @keyframes glow {
             from { filter: drop-shadow(0 0 5px var(--accent)); }
-            to { filter: drop-shadow(0 0 20px var(--accent)); }
+            to { filter: drop-shadow(0 0 20px var(--accent-secondary)); }
         }
 
         .tagline {
@@ -254,6 +255,42 @@
             border-color: var(--accent);
         }
 
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
         footer {
             text-align: center;
             padding: 3rem 2rem;
@@ -323,6 +360,11 @@
 
     <div class="container">
         <h2 class="section-title">Nos Plugins</h2>
+
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchBox" class="search-box" placeholder="Rechercher un plugin..." onkeyup="searchPlugins()">
+        </div>
 
         <div class="category-filter">
             <button class="filter-btn active" onclick="filterPlugins('all')">Tous</button>
@@ -595,7 +637,25 @@
             });
         }
 
+        function searchPlugins() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = plugins.filter(plugin =>
+                plugin.name.toLowerCase().includes(searchTerm) ||
+                plugin.description.toLowerCase().includes(searchTerm) ||
+                plugin.category.toLowerCase().includes(searchTerm) ||
+                plugin.features.some(f => f.toLowerCase().includes(searchTerm))
+            );
+            renderPlugins(filtered);
+
+            // Reset active filter button
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+        }
+
         function filterPlugins(category) {
+            // Clear search box
+            document.getElementById('searchBox').value = '';
+
             const buttons = document.querySelectorAll('.filter-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
