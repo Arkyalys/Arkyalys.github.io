@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARKYALYS - Minecraft Plugins</title>
+    <meta name="description" content="Portfolio et documentation des plugins Minecraft développés par ARKYALYS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #00ff88;
+            --accent-hover: #00cc6a;
+            --border: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                linear-gradient(45deg, #0a0a0a 25%, transparent 25%),
+                linear-gradient(-45deg, #0a0a0a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0a0a0a 75%),
+                linear-gradient(-45deg, transparent 75%, #0a0a0a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            opacity: 0.1;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--accent), #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px var(--accent)); }
+            to { filter: drop-shadow(0 0 20px var(--accent)); }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: var(--accent);
+            margin: 1rem auto;
+        }
+
+        .plugins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .plugin-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plugin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            transition: left 0.5s;
+        }
+
+        .plugin-card:hover::before {
+            left: 100%;
+        }
+
+        .plugin-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .plugin-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .plugin-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .plugin-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            min-height: 60px;
+        }
+
+        .plugin-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .plugin-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            font-size: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+            .stats {
+                gap: 1.5rem;
+            }
+            .plugins-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="logo">🎮 ARKYALYS</div>
+        <div class="tagline">Plugins Minecraft Premium • Serveur Faction</div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="pluginCount">23</div>
+                <div class="stat-label">Plugins</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="commitCount">1,247</div>
+                <div class="stat-label">Commits</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Java</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Nos Plugins</h2>
+
+        <div class="category-filter">
+            <button class="filter-btn active" onclick="filterPlugins('all')">Tous</button>
+            <button class="filter-btn" onclick="filterPlugins('faction')">Factions</button>
+            <button class="filter-btn" onclick="filterPlugins('economy')">Économie</button>
+            <button class="filter-btn" onclick="filterPlugins('utility')">Utilitaires</button>
+            <button class="filter-btn" onclick="filterPlugins('combat')">Combat</button>
+        </div>
+
+        <div id="pluginsContainer" class="plugins-grid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Chargement des plugins...
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://github.com/Arkyalys" target="_blank" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://discord.gg/arkyalys" target="_blank" title="Discord">
+                <i class="fab fa-discord"></i>
+            </a>
+            <a href="mailto:contact@arkyalys.net" title="Email">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+        <p>&copy; 2025 ARKYALYS • Serveur Minecraft Faction</p>
+        <p style="color: var(--text-secondary); margin-top: 1rem;">
+            mc.arkyalys.net
+        </p>
+    </footer>
+
+    <script>
+        const plugins = [
+            {
+                name: "ChatFormat",
+                icon: "💬",
+                description: "Système de chat avancé avec mentions @pseudo, formats par grade LuckPerms et support PlaceholderAPI",
+                category: "utility",
+                repo: "ChatFormat",
+                features: ["Mentions", "PlaceholderAPI", "LuckPerms"]
+            },
+            {
+                name: "FactionTop",
+                icon: "🏆",
+                description: "Classement des factions par richesse avec support TotemFactions et AxKoth",
+                category: "faction",
+                repo: "FactionTop",
+                features: ["Ranking", "Totems", "KOTH"]
+            },
+            {
+                name: "MinagePlugin",
+                icon: "⛏️",
+                description: "Système de mines privées avec gestion de tiers et collaboration entre joueurs",
+                category: "economy",
+                repo: "MinagePlugin",
+                features: ["Mines privées", "Collaboration", "Tiers"]
+            },
+            {
+                name: "UJobs",
+                icon: "💼",
+                description: "Système de jobs complet avec 13 métiers, traduction française et progression",
+                category: "economy",
+                repo: "UJobs",
+                features: ["13 jobs", "Progression", "Français"]
+            },
+            {
+                name: "TotemClaude",
+                icon: "🗿",
+                description: "Gestion des totems avec alertes Discord et système de capture",
+                category: "faction",
+                repo: "TotemClaude",
+                features: ["Discord", "Alertes", "Capture"]
+            },
+            {
+                name: "ScoreboardClaude",
+                icon: "📊",
+                description: "Scoreboard personnalisable avec animations et placeholders dynamiques",
+                category: "utility",
+                repo: "ScoreboardClaude",
+                features: ["Animations", "PlaceholderAPI", "Personnalisable"]
+            },
+            {
+                name: "ArmorEffect",
+                icon: "🛡️",
+                description: "Effets de potion lorsque vous portez des armures complètes",
+                category: "combat",
+                repo: "ArmorEffect",
+                features: ["Effets", "Armures", "Custom"]
+            },
+            {
+                name: "WildTools",
+                icon: "⚒️",
+                description: "Outils de minage avancés avec cassage 3x3 et intégration UJobs",
+                category: "economy",
+                repo: "WildTools",
+                features: ["3x3", "XP Jobs", "Multiplicateurs"]
+            },
+            {
+                name: "Quest",
+                icon: "📜",
+                description: "Système de quêtes dynamiques pour les joueurs",
+                category: "utility",
+                repo: "Quest",
+                features: ["Quêtes", "Récompenses", "Progression"]
+            },
+            {
+                name: "Ultrabar",
+                icon: "📏",
+                description: "Barre d'action personnalisée avec intégrations multiples",
+                category: "utility",
+                repo: "Ultrabar",
+                features: ["Action Bar", "Intégrations", "Custom"]
+            },
+            {
+                name: "DiscordAlerts",
+                icon: "🔔",
+                description: "Notifications Discord pour les événements serveur (KOTH, Totems)",
+                category: "faction",
+                repo: "DiscordAlerts",
+                features: ["Discord", "Webhook", "Temps réel"]
+            },
+            {
+                name: "ItemBlockClaude",
+                icon: "🚫",
+                description: "Blocage d'items spécifiques avec gestion fine des permissions",
+                category: "utility",
+                repo: "ItemBlockClaude",
+                features: ["Blocage", "Permissions", "Custom"]
+            },
+            {
+                name: "WildStacker",
+                icon: "📦",
+                description: "Stack automatique des entités et items pour optimiser les performances",
+                category: "utility",
+                repo: "WildStacker",
+                features: ["Stack", "Performance", "Optimisation"]
+            },
+            {
+                name: "OldCombatMechanics",
+                icon: "⚔️",
+                description: "Restaure les mécaniques de combat 1.8 sur versions modernes",
+                category: "combat",
+                repo: "OldCombatMechanics-Source",
+                features: ["1.8 Combat", "No Cooldown", "Compatible"]
+            },
+            {
+                name: "InvestClaude",
+                icon: "💰",
+                description: "Système d'investissement et de bourse pour l'économie",
+                category: "economy",
+                repo: "InvestClaude",
+                features: ["Bourse", "Investissements", "Économie"]
+            },
+            {
+                name: "BuyAp",
+                icon: "🏪",
+                description: "Système d'achat automatique pour l'auto-prison",
+                category: "utility",
+                repo: "BuyAp",
+                features: ["Auto-achat", "Prison", "Économie"]
+            },
+            {
+                name: "UnoCore",
+                icon: "🔧",
+                description: "Core plugin avec utilitaires essentiels et intégrations",
+                category: "utility",
+                repo: "UnoCore",
+                features: ["Core", "Utilitaires", "API"]
+            },
+            {
+                name: "StatsClaude",
+                icon: "📈",
+                description: "Statistiques avancées des joueurs avec classements",
+                category: "utility",
+                repo: "StatsClaude",
+                features: ["Stats", "Classements", "Tracking"]
+            },
+            {
+                name: "NoAi",
+                icon: "🧠",
+                description: "Désactive l'IA des entités pour économiser les ressources",
+                category: "utility",
+                repo: "NoAi",
+                features: ["Performance", "No AI", "Optimisation"]
+            },
+            {
+                name: "MobDamageCooldown",
+                icon: "⏱️",
+                description: "Cooldown entre les dégâts de mobs pour équilibrer le PvE",
+                category: "combat",
+                repo: "MobDamageCooldown",
+                features: ["Cooldown", "Mobs", "Balance"]
+            },
+            {
+                name: "FactionsBridge",
+                icon: "🌉",
+                description: "API universelle pour tous les plugins de factions",
+                category: "faction",
+                repo: "FactionsBridge",
+                features: ["API", "Universelle", "15+ Plugins"]
+            },
+            {
+                name: "EssentialsXChatHybrid",
+                icon: "💭",
+                description: "Hybride entre EssentialsChat et ChatFormat",
+                category: "utility",
+                repo: "EssentialsXChatHybrid",
+                features: ["Hybrid", "Essentials", "Chat"]
+            }
+        ];
+
+        function renderPlugins(filteredPlugins = plugins) {
+            const container = document.getElementById('pluginsContainer');
+            container.innerHTML = filteredPlugins.map(plugin => `
+                <div class="plugin-card" data-category="${plugin.category}">
+                    <div class="plugin-icon">${plugin.icon}</div>
+                    <div class="plugin-name">${plugin.name}</div>
+                    <div class="plugin-description">${plugin.description}</div>
+                    <div class="plugin-meta">
+                        <span><i class="fas fa-code"></i> Java</span>
+                        <span><i class="fas fa-tag"></i> ${plugin.category}</span>
+                    </div>
+                    <div class="plugin-links">
+                        <a href="https://github.com/Arkyalys/${plugin.repo}" class="btn" target="_blank">
+                            <i class="fab fa-github"></i> Code
+                        </a>
+                        <a href="https://github.com/Arkyalys/${plugin.repo}/issues/new?labels=bug&template=bug_report.md" class="btn" target="_blank">
+                            <i class="fas fa-bug"></i> Bug
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPlugins(category) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (category === 'all') {
+                renderPlugins();
+            } else {
+                const filtered = plugins.filter(p => p.category === category);
+                renderPlugins(filtered);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPlugins();
+            document.getElementById('pluginCount').textContent = plugins.length;
+        });
+    </script>
+</body>
+</html>
