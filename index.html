@@ -194,6 +194,22 @@
             margin-top: 1.5rem;
         }
 
+        .bug-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #ff4444;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .bug-badge.no-bugs {
+            background: #44ff44;
+        }
+
         .btn {
             padding: 0.5rem 1rem;
             border: 1px solid var(--accent);
@@ -521,10 +537,28 @@
             }
         ];
 
-        function renderPlugins(filteredPlugins = plugins) {
+        async function fetchOpenIssues(repo) {
+            try {
+                const response = await fetch(`https://api.github.com/repos/Arkyalys/${repo}/issues?state=open&labels=bug`);
+                if (response.ok) {
+                    const issues = await response.json();
+                    return issues.length;
+                }
+            } catch (error) {
+                console.error(`Error fetching issues for ${repo}:`, error);
+            }
+            return 0;
+        }
+
+        async function renderPlugins(filteredPlugins = plugins) {
             const container = document.getElementById('pluginsContainer');
+
+            // Render cards without bug counts first
             container.innerHTML = filteredPlugins.map(plugin => `
-                <div class="plugin-card" data-category="${plugin.category}">
+                <div class="plugin-card" data-category="${plugin.category}" data-repo="${plugin.repo}">
+                    <div class="bug-badge" id="badge-${plugin.repo}" style="display:none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
                     <div class="plugin-icon">${plugin.icon}</div>
                     <div class="plugin-name">${plugin.name}</div>
                     <div class="plugin-description">${plugin.description}</div>
@@ -536,12 +570,29 @@
                         <a href="https://github.com/Arkyalys/${plugin.repo}" class="btn" target="_blank">
                             <i class="fab fa-github"></i> Code
                         </a>
-                        <a href="https://github.com/Arkyalys/${plugin.repo}/issues/new?labels=bug&template=bug_report.md" class="btn" target="_blank">
+                        <a href="https://github.com/Arkyalys/${plugin.repo}/issues/new?labels=bug" class="btn" target="_blank">
                             <i class="fas fa-bug"></i> Bug
                         </a>
                     </div>
                 </div>
             `).join('');
+
+            // Fetch bug counts asynchronously
+            filteredPlugins.forEach(async (plugin) => {
+                const bugCount = await fetchOpenIssues(plugin.repo);
+                const badge = document.getElementById(`badge-${plugin.repo}`);
+                if (badge) {
+                    if (bugCount > 0) {
+                        badge.style.display = 'block';
+                        badge.className = 'bug-badge';
+                        badge.innerHTML = `🐛 ${bugCount} bug${bugCount > 1 ? 's' : ''}`;
+                    } else {
+                        badge.style.display = 'block';
+                        badge.className = 'bug-badge no-bugs';
+                        badge.innerHTML = '✅ 0 bug';
+                    }
+                }
+            });
         }
 
         function filterPlugins(category) {
